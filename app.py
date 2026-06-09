@@ -54,12 +54,16 @@ if uploaded_file:
             """
 
         with st.spinner("Analyzing image and generating ideas..."):
-         response = model.generate_content([prompt, image])
+          try:
+             response = model.generate_content([prompt, image])
 
         st.subheader("♻️ AI Recommendations")
 
         with st.container():
           st.markdown(response.text)
+except Exception as e:
+     st.error(
+         "AI quota reached. Please try again after a minute.")
 
         
 
