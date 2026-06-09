@@ -57,13 +57,13 @@ if uploaded_file:
           try:
              response = model.generate_content([prompt, image])
 
-        st.subheader("♻️ AI Recommendations")
+             st.subheader("♻️ AI Recommendations")
 
-        with st.container():
-          st.markdown(response.text)
-except Exception as e:
-     st.error(
-         "AI quota reached. Please try again after a minute.")
+             with st.container():
+                st.markdown(response.text)
+           except Exception as e:
+               st.error(
+                    "AI quota reached. Please try again after a minute.")
 
         
 
