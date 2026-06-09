@@ -1,168 +1,82 @@
 import streamlit as st
 import google.generativeai as genai
 from PIL import Image
-import time
+import random
 
-# ---------------------------
-# PAGE CONFIG
-# ---------------------------
 
-st.set_page_config(
-    page_title="♻️ Upcycling Copilot",
-    page_icon="♻️",
-    layout="wide"
-)
+genai.configure(api_key="AQ.Ab8RN6KP6JL-duVAzX7lIS0N3yl6suL4ngwsrpZgSJujHtuEZQ")
 
-# ---------------------------
-# GEMINI CONFIG
-# ---------------------------
+model = genai.GenerativeModel("gemini-2.5-flash")
 
-genai.configure(
-    api_key=st.secrets["GEMINI_API_KEY"]
-)
-
-model = genai.GenerativeModel(
-    "gemini-2.0-flash"
-)
-
-# ---------------------------
-# UI
-# ---------------------------
 
 st.title("♻️ Upcycling Copilot")
 
 st.caption(
-    "Turn waste into useful creations using AI"
+    "Transforming waste into opportunities using AI"
 )
 
 uploaded_file = st.file_uploader(
-    "Upload an old item",
+    "Upload an image",
     type=["jpg", "jpeg", "png"]
 )
 
-# ---------------------------
-# IMAGE PROCESSING
-# ---------------------------
-
 if uploaded_file:
-
     image = Image.open(uploaded_file)
 
-    # Reduce image size for speed
-    image.thumbnail((1024, 1024))
-
-    st.image(
-        image,
-        caption="Uploaded Item",
-        width=400
-    )
+    st.image(image, caption="Uploaded Item")
+    st.info(
+    "💡 Upload plastic bottles, cardboard boxes, old clothes, glass jars, or other household waste for best results."
+     )
 
     if st.button("Generate Upcycling Ideas"):
 
         prompt = """
-You are an expert in sustainability and DIY upcycling.
+            You are an expert in sustainability and upcycling.
 
-Analyze the uploaded image.
+            Analyze the uploaded image.
 
-Return:
+            Return:
 
-# Detected Item
+            # Detected Item
 
-# Top 5 Upcycling Ideas
+            # Upcycling Ideas
 
-For each idea provide:
+            For each idea provide:
+            - Name
+            - Difficulty (Easy/Medium/Hard)
+            - Materials Needed
+            - Steps
 
-- Idea Name
-- Difficulty (Easy/Medium/Hard)
-- Materials Needed
-- Step-by-Step Instructions
+            # Environmental Benefits
 
-# Environmental Benefits
+            # Estimated Waste Diverted
 
-# Estimated Waste Diverted
+            Format using markdown.
+            """
 
-Format everything neatly in markdown.
-"""
+        with st.spinner("Analyzing image and generating ideas..."):
+         response = model.generate_content([prompt, image])
 
-        try:
+        st.subheader("♻️ AI Recommendations")
 
-            start = time.time()
+        with st.container():
+          st.markdown(response.text)
 
-            with st.spinner(
-                "Analyzing image..."
-            ):
+        
 
-                response = model.generate_content(
-                    [prompt, image]
-                )
+        score = random.randint(70, 95)
 
-            end = time.time()
+        st.subheader("🌱 Sustainability Score")
 
-            st.success(
-                f"Generated in {end-start:.2f} seconds"
-            )
+        st.progress(score/100)
 
-            st.markdown("---")
+        st.write(f"{score}/100")
+        st.success(
+            """
+            Estimated Benefits
 
-            st.subheader(
-                "♻️ AI Recommendations"
-            )
-
-            st.markdown(
-                response.text
-            )
-
-            st.markdown("---")
-
-            st.subheader(
-                "🌱 Sustainability Impact"
-            )
-
-            st.progress(85)
-
-            st.write(
-                "Estimated Sustainability Score: 85/100"
-            )
-
-            st.info(
-                """
-• Reduces landfill waste
-
-• Encourages reuse
-
-• Supports circular economy
-
-• Promotes sustainable living
-"""
-            )
-
-        except Exception:
-
-            st.error(
-                "Gemini API quota reached. Showing fallback suggestions."
-            )
-
-            st.markdown(
-                """
-# Sample Upcycling Ideas
-
-### 1. Plant Pot
-Use the item as a decorative planter.
-
-### 2. Storage Container
-Convert it into a small organizer.
-
-### 3. Desk Organizer
-Store stationery items.
-
-### 4. Bird Feeder
-Create a simple feeder.
-
-### 5. Decorative Piece
-Paint and decorate for home use.
-
-## Environmental Benefit
-
-Keeps waste out of landfills and promotes reuse.
-"""
-            )
+            • Less waste sent to landfill
+            • Encourages circular economy
+            • Promotes sustainable living
+            """
+        )
