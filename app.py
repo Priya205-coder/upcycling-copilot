@@ -3,7 +3,7 @@ import google.generativeai as genai
 from PIL import Image
 import random
 
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+genai.configure(api_key="GEMINI_API_KEY")
 
 model = genai.GenerativeModel("gemini-2.5-flash")
 
@@ -54,14 +54,14 @@ if uploaded_file:
             """
 
         with st.spinner("Analyzing image and generating ideas..."):
-         try:
-            response = model.generate_content([prompt, image])
-            st.markdown(response.text)
+         response = model.generate_content([prompt, image])
 
-         except Exception as e:
-           st.error(
-        "AI quota reached. Please try again after a minute."
-    )
+        st.subheader("♻️ AI Recommendations")
+
+        with st.container():
+          st.markdown(response.text)
+
+        
 
         score = random.randint(70, 95)
 
