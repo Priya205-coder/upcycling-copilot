@@ -4,7 +4,7 @@ from PIL import Image
 import random
 
 
-genai.configure(api_key="AQ.Ab8RN6KP6JL-duVAzX7lIS0N3yl6suL4ngwsrpZgSJujHtuEZQ")
+genai.configure(api_key="AQ.Ab8RN6LveiuOzRpVWN81d_3Lkp2d6j_uzBZLw7Ef5bZdDco4YQ")
 
 model = genai.GenerativeModel("gemini-2.5-flash")
 
@@ -53,14 +53,16 @@ if uploaded_file:
 
             Format using markdown.
             """
-
+        
         with st.spinner("Analyzing image and generating ideas..."):
-         response = model.generate_content([prompt, image])
+            
+            response = model.generate_content([prompt, image])
 
-        st.subheader("♻️ AI Recommendations")
+            st.subheader("♻️ AI Recommendations")
 
-        with st.container():
-          st.markdown(response.text)
+            with st.container():
+                st.markdown(response.text)
+           
 
         
 
